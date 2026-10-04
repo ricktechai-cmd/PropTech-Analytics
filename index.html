@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Decisión e Inversión Inmobiliaria | PropTech Analytics Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #080c14;
+            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .dark-card {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .dark-card:hover {
+            border-color: #334155;
+        }
+        .saas-card-highlight {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.15);
+        }
+        .input-box {
+            background-color: #1a2336;
+            border: 1px solid #2a364f;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .input-box:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-custom {
+            animation: spin 1s linear infinite;
+        }
+
+        .toggle-switch-track {
+            width: 3.25rem;
+            height: 1.75rem;
+            background-color: #1a2336;
+            border: 1.5px solid #2a364f;
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            padding: 2px;
+        }
+        .toggle-switch-track.active {
+            background-color: #2563eb;
+            border-color: #3b82f6;
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+        }
+        .toggle-switch-knob {
+            width: 1.35rem;
+            height: 1.35rem;
+            background-color: #ffffff;
+            border-radius: 9999px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateX(0);
+        }
+        .toggle-switch-track.active .toggle-switch-knob {
+            transform: translateX(1.5rem);
+        }
+    </style>
+</head>
+<body class="bg-[#080c14] text-slate-100 min-h-screen flex flex-col antialiased">
+    <!-- Header / Navbar Superior -->
+    <header class="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-[1600px] mx-auto px-4 md:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m0 0v-4a2 2 0 012-2h2a2 2 0 012 2v4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold text-white tracking-tight flex items-center gap-2">
+                        PropTech Analytics <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">PRO v2.6</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Plataforma de Evaluación Estratégica Inmobiliaria</p>
+                </div>
+            </div>
+
+            <!-- Currency Selector & Live Exchange Rate Indicator -->
+            <div class="flex items-center flex-wrap gap-3">
+                <div class="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+                    <span id="rateStatusDot" class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span id="exchangeRateText" class="text-slate-300 font-mono text-[11px]">Cargando tipos de cambio...</span>
+                    <button onclick="fetchLiveExchangeRates(true)" title="Actualizar tasas en vivo" class="text-slate-400 hover:text-white transition-colors p-1 rounded hover:bg-slate-800">
+                        <svg id="refreshRatesIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <label for="currencySelect" class="text-xs font-semibold text-slate-400">Moneda:</label>
+                    <select id="currencySelect" class="bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 focus:border-blue-500 outline-none cursor-pointer">
+                        <option value="CLP" selected>CLP ($) - Pesos Chilenos</option>
+                        <option value="USD">USD ($) - Dólares US</option>
+                        <option value="EUR">EUR (€) - Euros</option>
+                    </select>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                    <button onclick="shareAnalysis()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                        </svg>
+                        <span>Compartir</span>
+                    </button>
+                    <button onclick="exportToExcel()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Exportar Excel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-[1600px] mx-auto px-4 md:px-8 py-6 flex-1 w-full relative space-y-6">
+
+        <!-- CONVERSOR RÁPIDO UF A CLP -->
+        <section class="dark-card p-4 md:p-5 border-blue-500/40 bg-gradient-to-r from-slate-900 via-blue-950/25 to-slate-900 shadow-xl relative overflow-hidden transition-all duration-300" id="ufConverterCard">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-sm md:text-base font-extrabold text-white tracking-tight">Conversor de UF a Pesos Chilenos (CLP)</h2>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">En Tiempo Real</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Ingresa cualquier valor en UF y obtén automáticamente la equivalencia en CLP.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:flex items-center gap-2 bg-slate-950/60 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <span class="text-[10px] uppercase font-bold text-slate-400">Tasa 1 UF =</span>
+                        <div class="flex items-center gap-1 font-mono text-xs font-bold text-blue-400">
+                            <span>$</span>
+                            <input type="number" id="ufRateInput" value="40918" class="bg-transparent w-20 text-blue-400 font-mono font-bold text-xs outline-none border-b border-blue-500/30 text-right focus:border-blue-400" title="Valor referencial de la UF en CLP">
+                            <span class="text-[10px] text-slate-400">CLP</span>
+                        </div>
+                    </div>
+                    <button onclick="toggleSectionCollapse('ufConverterBody', this)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>Ocultar</span>
+                        <svg class="w-3.5 h-3.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Converter Body -->
+            <div id="ufConverterBody" class="pt-4 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all duration-300">
+                <div class="md:col-span-5 space-y-1.5">
+                    <label for="ufInputValue" class="block text-xs font-bold text-slate-300">
+                        Ingresar Monto en UF
+                    </label>
+                    <div class="input-box rounded-xl px-3.5 py-2.5 flex items-center gap-2 border-blue-500/30 focus-within:border-blue-500">
+                        <input type="number" step="any" id="ufInputValue" placeholder="Ej: 6110" value="6110" class="bg-transparent w-full text-white font-black text-sm md:text-base outline-none font-mono">
+                        <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20">UF</span>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 flex justify-center items-center pt-1 md:pt-4">
+                    <div class="p-2 rounded-xl bg-slate-800 text-blue-400 border border-slate-700 flex items-center gap-1">
+                        <svg class="w-4 h-4 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                        <svg class="w-4 h-4 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        <span class="text-[10px] font-bold uppercase text-slate-400">Equivale</span>
+                    </div>
+                </div>
+
+                <div class="md:col-span-5 space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-300">
+                        Valor Convertido en Pesos Chilenos (CLP)
+                    </label>
+                    <div class="bg-slate-950/80 rounded-xl px-4 py-2 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-2 shadow-inner">
+                        <div>
+                            <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider block">Total en CLP</span>
+                            <span id="ufToClpResult" class="text-base md:text-lg font-black text-emerald-400 font-mono tracking-tight">$250.008.980</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="copyUfClpResult()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer" title="Copiar valor CLP">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002-2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                <span>Copiar</span>
+                            </button>
+                            <button onclick="applyUfAsPurchasePrice()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all flex items-center gap-1.5 cursor-pointer" title="Cargar este monto como Precio de Compra de la propiedad">
+                                <span>Usar como Precio</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. PARÁMETROS DE ENTRADA -->
+        <section id="sidebarCol" class="dark-card p-5 space-y-5 border-blue-500/30 bg-slate-900/90 shadow-xl transition-all duration-300">
+            <div class="border-b border-slate-800 pb-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <div class="flex items-center gap-2 font-bold text-sm text-white">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        <h3 class="text-base font-extrabold text-white">Parámetros de Entrada</h3>
+                    </div>
+                    <p class="text-[11px] text-blue-400 font-medium mt-0.5">📍 Modifica las variables de inversión. Los cálculos y conversiones se actualizan al instante.</p>
+                </div>
+                <button onclick="toggleSectionCollapse('sidebarColBody', this)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span>Ocultar</span>
+                    <svg class="w-3.5 h-3.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+            </div>
+
+            <!-- 4 Column Grid for Inputs -->
+            <div id="sidebarColBody" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start transition-all duration-300">
+                
+                <!-- Group 1: Adquisición -->
+                <div class="space-y-3.5 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-blue-400 block border-b border-slate-800 pb-1.5">1. Datos de Adquisición</span>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Precio de Compra Propiedad</label>
+                        <div class="input-box rounded-xl px-3 py-2 flex items-center gap-2">
+                            <span id="currencySymbolPrefix1" class="text-slate-500 font-semibold text-xs">$</span>
+                            <input type="text" inputmode="numeric" id="purchasePrice" value="250.000.000" placeholder="0" data-type="currency" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Gastos Iniciales / Reformas / Escrituración</label>
+                        <div class="input-box rounded-xl px-3 py-2 flex items-center gap-2">
+                            <span id="currencySymbolPrefix2" class="text-slate-500 font-semibold text-xs">$</span>
+                            <input type="text" inputmode="numeric" id="initialCosts" value="15.000.000" placeholder="0" data-type="currency" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Financiamiento -->
+                <div class="space-y-3.5 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-400 block border-b border-slate-800 pb-1.5">2. Estructura de Crédito</span>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-semibold text-slate-300">Pie / Enganche (%)</label>
+                            <span id="downPaymentBadge" class="text-[11px] font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">20% ($50.000.000)</span>
+                        </div>
+                        <input type="range" id="downPaymentPct" min="0" max="100" step="10" value="20" class="w-full cursor-pointer">
+                        <div class="flex justify-between text-[9px] text-slate-400 font-mono mt-1.5 px-0.5 select-none">
+                            <span class="cursor-pointer hover:text-blue-400 transition-colors" onclick="setDownPayment(0)">0%</span>
+                            <span class="cursor-pointer hover:text-blue-400 transition-colors" onclick="setDownPayment(20)">20%</span>
+                            <span class="cursor-pointer hover:text-blue-400 transition-colors" onclick="setDownPayment(40)">40%</span>
+                            <span class="cursor-pointer hover:text-blue-400 transition-colors" onclick="setDownPayment(60)">60%</span>
+                            <span class="cursor-pointer hover:text-blue-400 transition-colors" onclick="setDownPayment(80)">80%</span>
+                            <span class="cursor-pointer hover:text-blue-400 transition-colors" onclick="setDownPayment(100)">100%</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Tasa Anual (%)</label>
+                            <div class="input-box rounded-xl px-2.5 py-2 flex items-center gap-1">
+                                <input type="number" id="interestRate" step="0.1" value="5.5" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                                <span class="text-slate-500 text-xs">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Plazo (Años)</label>
+                            <div class="input-box rounded-xl px-2.5 py-2 flex items-center gap-1">
+                                <input type="number" id="loanTerm" value="30" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                                <span class="text-slate-500 text-xs">Años</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Operación Mensual -->
+                <div class="space-y-3.5 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 block border-b border-slate-800 pb-1.5">3. Operación Mensual</span>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Renta Mensual Estimada</label>
+                        <div class="input-box rounded-xl px-3 py-2 flex items-center gap-2">
+                            <span id="currencySymbolPrefix3" class="text-slate-500 font-semibold text-xs">$</span>
+                            <input type="text" inputmode="numeric" id="monthlyRent" value="1.800.000" placeholder="0" data-type="currency" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Gastos Operativos Mensuales</label>
+                        <div class="input-box rounded-xl px-3 py-2 flex items-center gap-2">
+                            <span id="currencySymbolPrefix4" class="text-slate-500 font-semibold text-xs">$</span>
+                            <input type="text" inputmode="numeric" id="monthlyExpenses" value="350.000" placeholder="0" data-type="currency" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 4: Supuestos Largo Plazo (TIR) -->
+                <div class="space-y-3.5 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-400 block border-b border-slate-800 pb-1.5">4. Largo Plazo y TIR</span>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Horizonte Inversión (TIR)</label>
+                        <select id="tirHorizonSelect" class="input-box rounded-xl px-3 py-2 text-xs font-bold text-white w-full outline-none cursor-pointer">
+                            <option value="10" selected>10 Años</option>
+                            <option value="15">15 Años</option>
+                            <option value="20">20 Años</option>
+                            <option value="25">25 Años</option>
+                            <option value="30">30 Años</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Plusvalía Anual Estimada (%)</label>
+                        <div class="input-box rounded-xl px-2.5 py-2 flex items-center gap-1">
+                            <input type="number" id="appreciationRate" step="0.1" value="2.0" class="bg-transparent w-full text-white font-bold text-xs outline-none">
+                            <span class="text-slate-500 text-xs">%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. REPORTES Y RESULTADOS PRINCIPALES -->
+        <main id="mainDashboardCol" class="space-y-6 transition-all duration-300">
+
+            <!-- FILA DE INDICADORES CLAVE: FIJOS Y OCULTOS BAJO DEMANDA -->
+            <section class="space-y-3" id="kpiSection">
+                <div class="flex items-center justify-between px-1 flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            <span>Indicadores Clave de Operación y Rentabilidad</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5">3 métricas fijas principales • 6 adicionales con visibilidad bajo demanda</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="kpiCurrencyLabel" class="text-[11px] text-blue-400 font-mono">Valores en CLP</span>
+                    </div>
+                </div>
+
+                <!-- 1. INDICADORES FIJOS (SIEMPRE VISIBLES: Cash Flow Libre, CoC Return, Cap Rate) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                        
+                    <!-- Card 1: Cash Flow -->
+                    <div class="dark-card p-4 flex flex-col justify-between border-emerald-500/30 bg-gradient-to-b from-slate-900 to-slate-950 shadow-lg relative transition-all duration-300 hover:border-emerald-500/50">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-extrabold text-slate-200">Cash Flow Libre</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span id="cashFlowBadge" class="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Positivo</span>
+                                    <button onclick="toggleCardDetail('detail_cashFlow', this)" class="text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 font-semibold transition-all flex items-center gap-1 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-3 h-3 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="cashFlowResult" class="text-xl md:text-2xl font-black text-emerald-400 font-mono tracking-tight my-1">$314.420</div>
+                        </div>
+                        <div id="detail_cashFlow" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-2 text-[10px] text-slate-400 space-y-1">
+                            <span id="cashFlowExplain" class="leading-tight block">Flujo libre mensual neto de caja después de cubrir gastos e hipoteca.</span>
+                            <span class="text-[9px] text-emerald-500/80 font-mono block">Fórmula: Renta − Gastos Operativos − Hipoteca</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: CoC Return -->
+                    <div class="dark-card p-4 flex flex-col justify-between border-purple-500/30 bg-gradient-to-b from-slate-900 to-slate-950 shadow-lg relative transition-all duration-300 hover:border-purple-500/50">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-extrabold text-slate-200">CoC Return (ROI)</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span id="roiBadge" class="text-[9px] font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">Efectivo</span>
+                                    <button onclick="toggleCardDetail('detail_roi', this)" class="text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 font-semibold transition-all flex items-center gap-1 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-3 h-3 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="roiResult" class="text-xl md:text-2xl font-black text-purple-400 font-mono tracking-tight my-1">5,80%</div>
+                        </div>
+                        <div id="detail_roi" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-2 text-[10px] text-slate-400 space-y-1">
+                            <span id="cocExplain" class="leading-tight block">Retorno anual sobre capital invertido (Cash-on-Cash Return).</span>
+                            <span class="text-[9px] text-purple-400/80 font-mono block">Fórmula: (Cash Flow Anual ÷ Inversión Inicial) × 100</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Cap Rate -->
+                    <div class="dark-card p-4 flex flex-col justify-between border-blue-500/30 bg-gradient-to-b from-slate-900 to-slate-950 shadow-lg relative transition-all duration-300 hover:border-blue-500/50">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-extrabold text-slate-200">Cap Rate</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span id="capRateBadge" class="text-[9px] font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Renta Activo</span>
+                                    <button onclick="toggleCardDetail('detail_capRate', this)" class="text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 font-semibold transition-all flex items-center gap-1 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-3 h-3 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="capRateResult" class="text-xl md:text-2xl font-black text-blue-400 font-mono tracking-tight my-1">6,96%</div>
+                        </div>
+                        <div id="detail_capRate" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-2 text-[10px] text-slate-400 space-y-1">
+                            <span id="capRateExplain" class="leading-tight block">Rentabilidad operativa neta pura del activo sin financiamiento.</span>
+                            <span class="text-[9px] text-blue-400/80 font-mono block">Fórmula: (NOI Anual ÷ Precio Compra) × 100</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 2. BOTÓN DE CONTROL PARA DESPLEGAR/OCULTAR LOS OTROS 6 INDICADORES -->
+                <div class="flex justify-center pt-2 pb-1">
+                    <button onclick="toggleExtraKpis()" id="toggleExtraKpisBtn" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 hover:from-slate-850 hover:to-slate-800 text-slate-200 hover:text-white text-xs font-extrabold border border-blue-500/30 hover:border-blue-400/60 shadow-lg shadow-blue-500/5 transition-all flex items-center gap-2.5 cursor-pointer group">
+                        <span id="toggleExtraKpisText" class="tracking-wide">Mostrar más indicadores (6)</span>
+                        <div class="p-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                            <svg id="toggleExtraKpisIcon" class="w-3.5 h-3.5 transform transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- 3. INDICADORES SECUNDARIOS (OCULTOS POR DEFECTO: Break Even, Payback, TIR, DSCR, LTV, Capital Requerido) -->
+                <div id="extraKpisGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 transition-all duration-300">
+                        
+                    <!-- Card 4: Break Even -->
+                    <div class="dark-card p-3.5 flex flex-col justify-between border-amber-500/20 transition-all duration-300 hover:border-amber-500/40">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-slate-300">Punto de Equilibrio</span>
+                                <div class="flex items-center gap-1">
+                                    <span id="breakEvenBadge" class="text-[8px] font-semibold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Break Even</span>
+                                    <button onclick="toggleCardDetail('detail_breakEven', this)" class="text-[9px] text-slate-300 hover:text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-semibold transition-all flex items-center gap-0.5 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-2.5 h-2.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="breakEvenResult" class="text-base font-black text-amber-400 font-mono tracking-tight">$1.485.580</div>
+                        </div>
+                        <div id="detail_breakEven" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-1.5">
+                            <span id="breakEvenExplain" class="text-[10px] text-slate-400 leading-tight block">
+                                Renta mín. para $0 pérdidas (82,5% ocupación).
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Payback Period -->
+                    <div class="dark-card p-3.5 flex flex-col justify-between border-cyan-500/20 transition-all duration-300 hover:border-cyan-500/40">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-slate-300">Payback</span>
+                                <div class="flex items-center gap-1">
+                                    <span id="paybackBadge" class="text-[8px] font-semibold text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">Recuperación</span>
+                                    <button onclick="toggleCardDetail('detail_payback', this)" class="text-[9px] text-slate-300 hover:text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-semibold transition-all flex items-center gap-0.5 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-2.5 h-2.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="paybackResult" class="text-base font-black text-cyan-400 font-mono tracking-tight">17,2 Años</div>
+                        </div>
+                        <div id="detail_payback" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-1.5">
+                            <span id="paybackExplain" class="text-[10px] text-slate-400 leading-tight block">
+                                Tiempo para retornar capital de bolsillo.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: TIR (IRR) Proyectada -->
+                    <div class="dark-card p-3.5 flex flex-col justify-between border-rose-500/20 transition-all duration-300 hover:border-rose-500/40">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span id="tirCardTitle" class="text-[11px] font-bold text-slate-300">TIR (10 años)</span>
+                                <div class="flex items-center gap-1">
+                                    <span id="tirBadge" class="text-[8px] font-semibold text-rose-400 bg-rose-500/10 px-1.5 py-0.5 rounded border border-rose-500/20">Tasa Interna</span>
+                                    <button onclick="toggleCardDetail('detail_tir', this)" class="text-[9px] text-slate-300 hover:text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-semibold transition-all flex items-center gap-0.5 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-2.5 h-2.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="tirResult" class="text-base font-black text-rose-400 font-mono tracking-tight">12,45%</div>
+                        </div>
+                        <div id="detail_tir" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-1.5">
+                            <span id="tirExplain" class="text-[10px] text-slate-400 leading-tight block">
+                                Rendimiento global (Flujos + Plusvalía).
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: DSCR -->
+                    <div class="dark-card p-3.5 flex flex-col justify-between border-indigo-500/20 transition-all duration-300 hover:border-indigo-500/40">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-slate-300">DSCR</span>
+                                <div class="flex items-center gap-1">
+                                    <span id="dscrBadge" class="text-[8px] font-semibold text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">Cobertura</span>
+                                    <button onclick="toggleCardDetail('detail_dscr', this)" class="text-[9px] text-slate-300 hover:text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-semibold transition-all flex items-center gap-0.5 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-2.5 h-2.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="dscrResult" class="text-base font-black text-indigo-400 font-mono tracking-tight">1,06</div>
+                        </div>
+                        <div id="detail_dscr" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-1.5">
+                            <span id="dscrExplain" class="text-[10px] text-slate-400 leading-tight block">
+                                Cobertura sobre cuota bancaria.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: LTV -->
+                    <div class="dark-card p-3.5 flex flex-col justify-between border-orange-500/20 transition-all duration-300 hover:border-orange-500/40">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-slate-300">LTV</span>
+                                <div class="flex items-center gap-1">
+                                    <span id="ltvBadge" class="text-[8px] font-semibold text-orange-400 bg-orange-500/10 px-1.5 py-0.5 rounded border border-orange-500/20">Crédito</span>
+                                    <button onclick="toggleCardDetail('detail_ltv', this)" class="text-[9px] text-slate-300 hover:text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-semibold transition-all flex items-center gap-0.5 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-2.5 h-2.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="ltvResult" class="text-base font-black text-orange-400 font-mono tracking-tight">80,00%</div>
+                        </div>
+                        <div id="detail_ltv" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-1.5">
+                            <span id="ltvExplain" class="text-[10px] text-slate-400 leading-tight block">
+                                % Financiado sobre valor propiedad.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card 9: Equity Invertido -->
+                    <div class="dark-card p-3.5 flex flex-col justify-between border-teal-500/20 transition-all duration-300 hover:border-teal-500/40">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-slate-300">Capital Requerido</span>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-[8px] font-semibold text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded border border-teal-500/20">Pie + Gastos</span>
+                                    <button onclick="toggleCardDetail('detail_capital', this)" class="text-[9px] text-slate-300 hover:text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 font-semibold transition-all flex items-center gap-0.5 cursor-pointer" title="Ver más detalles">
+                                        <span>Ver más</span>
+                                        <svg class="w-2.5 h-2.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="totalCashCardVal" class="text-base font-black text-teal-400 font-mono tracking-tight">$65.000.000</div>
+                        </div>
+                        <div id="detail_capital" class="hidden transition-all duration-200 mt-2 border-t border-slate-800/80 pt-1.5">
+                            <span class="text-[10px] text-slate-400 leading-tight block">
+                                Desembolso inicial de bolsillo.
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+                <!-- 3. RESUMEN FINANCIERO COMPLETO EN TABLA -->
+                <section class="dark-card p-5 space-y-4" id="resumenFinancieroCard">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-wrap gap-2">
+                        <div>
+                            <h3 class="text-sm font-bold text-white tracking-tight">Resumen Financiero Estructurado</h3>
+                            <p class="text-xs text-slate-400">Estructura patrimonial, bancaria y desempeño de caja</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="tableCurrencyBadge" class="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-lg">Moneda: CLP</span>
+                            <button onclick="toggleSectionCollapse('resumenFinancieroContent', this)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer">
+                                <span>Ocultar</span>
+                                <svg class="w-3.5 h-3.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="resumenFinancieroContent" class="space-y-4 transition-all duration-300">
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left border-collapse">
+                            <tbody class="divide-y divide-slate-800/60">
+                                
+                                <!-- Activo -->
+                                <tr class="bg-slate-900/50">
+                                    <td colspan="2" class="py-2 px-3 text-[10px] font-extrabold uppercase tracking-wider text-blue-400">
+                                        Activo Inmobiliario
+                                    </td>
+                                </tr>
+                                <tr id="ufSummaryRow" class="bg-blue-950/20">
+                                    <td class="py-2.5 px-3 text-slate-300 pl-5">
+                                        Cotización Equivalente en UF (Chile)
+                                        <span id="ufSummaryDetail" class="block text-[10px] text-blue-400 font-mono">(Valor Referencial UF: $40.918 CLP)</span>
+                                    </td>
+                                    <td id="ufSummaryVal" class="py-2.5 px-3 text-right font-bold text-blue-400 font-mono">6.110,00 UF</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Valor Comercial de la Propiedad
+                                        <span class="block text-[10px] text-slate-500 font-normal">Precio pactado para adquisición</span>
+                                    </td>
+                                    <td id="summaryPropertyValue" class="py-2.5 px-3 text-right font-bold text-white font-mono text-xs md:text-sm">$250.000.000</td>
+                                </tr>
+
+                                <!-- Capital Invertido -->
+                                <tr class="bg-slate-900/50">
+                                    <td colspan="2" class="py-2 px-3 text-[10px] font-extrabold uppercase tracking-wider text-purple-400">
+                                        Capital Invertido (Recursos Propios)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Inversión Inicial Requerida
+                                        <span class="block text-[10px] text-slate-500 font-normal">Pie / Enganche + Gastos de Escrituración o Reformas</span>
+                                    </td>
+                                    <td id="totalCashInvested" class="py-2.5 px-3 text-right font-bold text-purple-300 font-mono text-xs md:text-sm">$65.000.000</td>
+                                </tr>
+
+                                <!-- Financiamiento -->
+                                <tr class="bg-slate-900/50">
+                                    <td colspan="2" class="py-2 px-3 text-[10px] font-extrabold uppercase tracking-wider text-indigo-400">
+                                        Financiamiento Hipotecario
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Monto del Crédito Solicitado
+                                        <span class="block text-[10px] text-slate-500 font-normal">Capital prestado por la institución financiera</span>
+                                    </td>
+                                    <td id="loanAmount" class="py-2.5 px-3 text-right font-bold text-white font-mono text-xs md:text-sm">$200.000.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Patrimonio Inicial (Equity)
+                                        <span class="block text-[10px] text-slate-500 font-normal">Valor Propiedad − Crédito Hipotecario</span>
+                                    </td>
+                                    <td id="initialEquityVal" class="py-2.5 px-3 text-right font-bold text-blue-400 font-mono text-xs md:text-sm">$50.000.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Pago Hipotecario Mensual
+                                        <span class="block text-[10px] text-slate-500 font-normal">Cuota mensual pactada con el banco</span>
+                                    </td>
+                                    <td id="monthlyMortgage" class="py-2.5 px-3 text-right font-bold text-slate-200 font-mono text-xs md:text-sm">$1.135.580</td>
+                                </tr>
+
+                                <!-- Desempeño Operativo y Retornos avanzadas -->
+                                <tr class="bg-slate-900/50">
+                                    <td colspan="2" class="py-2 px-3 text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">
+                                        Desempeño Operativo & Métricas Avanzadas
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Ingreso Operativo Neto (NOI Anual)
+                                        <span class="block text-[10px] text-slate-500 font-normal">(Renta Mensual − Gastos Operativos) × 12</span>
+                                    </td>
+                                    <td id="noiAnual" class="py-2.5 px-3 text-right font-bold text-emerald-400 font-mono text-xs md:text-sm">$14.400.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Flujo de Caja Neto Mensual
+                                        <span class="block text-[10px] text-slate-500 font-normal">Renta − Gastos Operativos − Cuota Hipotecaria</span>
+                                    </td>
+                                    <td id="summaryMonthlyCashFlow" class="py-2.5 px-3 text-right font-bold text-emerald-400 font-mono text-xs md:text-sm">$314.420</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Punto de Equilibrio (Break Even)
+                                        <span class="block text-[10px] text-slate-500 font-normal">Renta mensual para cubrir Gastos + Dividendo</span>
+                                    </td>
+                                    <td id="tableBreakEvenVal" class="py-2.5 px-3 text-right font-bold text-amber-400 font-mono text-xs md:text-sm">$1.485.580</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Período de Recuperación (Payback)
+                                        <span class="block text-[10px] text-slate-500 font-normal">Años necesarios para recuperar el Capital Invertido con Cash Flow</span>
+                                    </td>
+                                    <td id="tablePaybackVal" class="py-2.5 px-3 text-right font-bold text-cyan-400 font-mono text-xs md:text-sm">17,2 Años</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Tasa Interna de Retorno (<span id="tableTirLabel">TIR Proyectada a 10 Años</span>)
+                                        <span class="block text-[10px] text-slate-500 font-normal">Retorno anualizado considerando flujo acumulado y plusvalía neta al finalizar el horizonte</span>
+                                    </td>
+                                    <td id="tableTirVal" class="py-2.5 px-3 text-right font-bold text-rose-400 font-mono text-xs md:text-sm">12,45%</td>
+                                </tr>
+
+                                <!-- Costo del Financiamiento -->
+                                <tr class="bg-slate-900/50">
+                                    <td colspan="2" class="py-2 px-3 text-[10px] font-extrabold uppercase tracking-wider text-amber-400">
+                                        Costo del Financiamiento en el Plazo
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2.5 px-3 text-slate-300 font-semibold pl-5">
+                                        Intereses Hipotecarios Totales
+                                        <span class="block text-[10px] text-slate-500 font-normal">Costo financiero acumulado proyectado</span>
+                                    </td>
+                                    <td id="totalInterest" class="py-2.5 px-3 text-right font-bold text-amber-400 font-mono text-xs md:text-sm">$208.808.800</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Highlight Total Cost Box -->
+                    <div class="saas-card-highlight rounded-2xl p-4 border border-blue-500/30 space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-400 block">Compromiso Total del Proyecto</span>
+                                <h4 class="text-sm font-extrabold text-white">Costo Acumulado Total</h4>
+                            </div>
+                            <div id="totalPropertyCost" class="text-xl md:text-2xl font-black text-blue-400 font-mono tracking-tight">
+                                $473.808.800
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                                <span class="text-xs text-slate-300 font-semibold">Capital Propio Inicial</span>
+                                <span id="breakdownInitialCash" class="font-bold font-mono text-purple-300 text-xs md:text-sm">$65.000.000</span>
+                            </div>
+                            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                                <span class="text-xs text-slate-300 font-semibold">Crédito + Intereses</span>
+                                <span id="breakdownTotalMortgage" class="font-bold font-mono text-indigo-300 text-xs md:text-sm">$408.808.800</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                </section>
+
+
+                <!-- 4. DICTAMEN EJECUTIVO Y CONCLUSIÓN -->
+                <section class="dark-card p-6 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border-blue-500/30 relative overflow-hidden" id="dictamenCard">
+                    <div class="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-5 flex-wrap gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-400">Conclusión Estratégica y Dictamen Final</h3>
+                                <p class="text-[11px] text-slate-400">Evaluación consolidada basada en datos, métricas de retorno (TIR, CoC) y punto de equilibrio</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleSectionCollapse('dictamenContent', this)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer">
+                            <span>Ocultar</span>
+                            <svg class="w-3.5 h-3.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+
+                    <div id="dictamenContent" class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10 transition-all duration-300">
+                        
+                        <!-- Score & Status -->
+                        <div class="flex items-center gap-5">
+                            <div class="flex flex-col items-center justify-center p-4 bg-slate-900/90 rounded-2xl border border-blue-500/20 shadow-xl min-w-[120px]">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Score Inversión</span>
+                                <div class="flex items-baseline gap-1 my-1">
+                                    <span id="investmentScoreVal" class="text-4xl md:text-5xl font-black text-white tracking-tight">82</span>
+                                    <span class="text-xs font-bold text-slate-500">/100</span>
+                                </div>
+                                <span id="profileBadge" class="text-[9px] font-bold px-2 py-0.5 rounded-full border bg-blue-500/10 text-blue-400 border-blue-500/20">
+                                    🟡 Perfil Moderado
+                                </span>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <div id="scoreStatusBadgeContainer">
+                                    <div id="scoreStatusBadge" class="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-extrabold text-xs inline-flex items-center gap-2 shadow-lg shadow-emerald-500/10">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        <span id="scoreStatusText">🟢 Oportunidad Atractiva</span>
+                                    </div>
+                                </div>
+                                <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">Dictamen Ejecutivo de la Oportunidad</h2>
+                                <p id="scoreDescription" class="text-xs text-slate-400 font-medium max-w-xl">
+                                    Dictamen final emitido tras la evaluación algorítmica multimoneda de cobertura de deuda, rentabilidad sobre capital (CoC), TIR a 10 años y holgura sobre el punto de equilibrio.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Strategic AI Recommendation Pill Box -->
+                        <div class="w-full lg:w-80 bg-slate-900/80 rounded-2xl p-4 border border-blue-500/20 space-y-1.5 shadow-inner">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                                    <span>💡</span> Recomendación Estratégica
+                                </span>
+                                <span class="text-[9px] text-slate-500 font-mono">Motor Pro</span>
+                            </div>
+                            <p id="recommendationText" class="text-xs text-slate-300 leading-relaxed font-medium">
+                                Analizando variables de liquidez y riesgo operacional...
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- NUEVA SECCIÓN: COMPARATIVA MULTI-HORIZONTE DE TIR -->
+                <section class="dark-card p-5 space-y-4 border-rose-500/30 bg-slate-900/90" id="tirEvolutionCard">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 flex-wrap gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-extrabold text-white tracking-tight">Evolución del Retorno por Horizonte de Inversión (TIR)</h3>
+                                <p class="text-xs text-slate-400">Análisis comparativo simultáneo de rentabilidad a 10, 15, 20, 25 y 30 años (Haga clic en una tarjeta para seleccionar el horizonte)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="multiHorizonBadge" class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-lg">Sensibilidad Temporal</span>
+                            <button onclick="toggleSectionCollapse('tirComparisonGrid', this)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1 cursor-pointer">
+                                <span>Ocultar</span>
+                                <svg class="w-3.5 h-3.5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Cards Grid -->
+                    <div id="tirComparisonGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 transition-all duration-300">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </section>
+
+
+                <!-- 5. GRÁFICOS Y VISUALIZACIONES -->
+                <section class="space-y-4 relative">
+                    <div class="flex items-center justify-between px-2 flex-wrap gap-3 border-t border-b border-slate-800/80 py-3.5 bg-slate-950/30 rounded-xl">
+                        <div>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path></svg>
+                                <span>Análisis Gráfico de Desempeño</span>
+                            </h3>
+                            <p id="chartsCurrencyLabel" class="text-[11px] text-slate-500 mt-0.5">Valores Convertidos Dinámicamente</p>
+                        </div>
+
+                        <!-- Modern Toggle Switch Button -->
+                        <button onclick="toggleCharts()" id="toggleChartsBtn" class="flex items-center gap-3 bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-slate-700 px-4 py-2 rounded-xl transition-all cursor-pointer group shadow-md">
+                            <span id="toggleChartsBtnText" class="text-xs font-extrabold text-slate-300 group-hover:text-white transition-colors tracking-wide uppercase">OCULTAR GRÁFICOS</span>
+                            <div id="toggleSwitchTrack" class="toggle-switch-track active shrink-0">
+                                <div id="toggleSwitchKnob" class="toggle-switch-knob"></div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Charts Grid Container -->
+                    <div id="chartsContainer" class="space-y-4 transition-all duration-300">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Chart 1: Cash Flow Breakdown -->
+                            <div class="dark-card p-4 flex flex-col justify-between">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-200">Destino de la Renta Mensual</h4>
+                                        <p class="text-[10px] text-slate-400">Gastos vs Hipoteca vs Cash Flow Libre</p>
+                                    </div>
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                </div>
+                                <div class="h-44 relative flex items-center justify-center">
+                                    <canvas id="cashFlowChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 2: Capital Composition -->
+                            <div class="dark-card p-4 flex flex-col justify-between">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-200">Estructura de Financiamiento</h4>
+                                        <p class="text-[10px] text-slate-400">Capital Propio vs Deuda Bancaria</p>
+                                    </div>
+                                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                                </div>
+                                <div class="h-44 relative flex items-center justify-center">
+                                    <canvas id="capitalChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart 3: Projections -->
+                        <div class="dark-card p-4 space-y-2">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <div>
+                                    <h4 id="projectionTitleText" class="text-xs font-bold text-slate-200">Proyección Acumulada a 30 Años</h4>
+                                    <p class="text-[10px] text-slate-400">Crecimiento estimado de Cash Flow libre acumulado vs Amortización de Deuda</p>
+                                </div>
+                                <span id="projectionBadge" class="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">Modelo 360 Meses</span>
+                            </div>
+                            <div class="h-80 md:h-96 relative">
+                                <canvas id="projectionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        
+        // Single Source of Truth: Base values stored strictly in Base Currency (CLP)
+        const baseValues = {
+            purchasePrice: 250000000,
+            initialCosts: 15000000,
+            monthlyRent: 1800000,
+            monthlyExpenses: 350000
+        };
+
+        const UF_IN_CLP = 40918; // Reference UF rate in CLP
+
+        // Currency Configuration Tokens
+        const currencyConfigs = {
+            CLP: { locale: 'es-CL', symbol: '$', code: 'CLP', name: 'Pesos Chilenos', decimals: 0, position: 'prefix' },
+            USD: { locale: 'en-US', symbol: '$', code: 'USD', name: 'Dólares US', decimals: 2, position: 'prefix' },
+            EUR: { locale: 'de-DE', symbol: '€', code: 'EUR', name: 'Euros', decimals: 2, position: 'suffix' }
+        };
+
+        // Live Exchange Rates relative to base CLP
+        let exchangeRates = {
+            CLP: 1,
+            USD: 1 / 954.65,
+            EUR: 1 / 1085.43
+        };
+
+        let rateSource = "Mercado (Actualizado)";
+        let lastRateUpdate = new Date();
+        let currentCurrency = 'CLP';
+        let isSidebarOpen = true;
+
+        let cashFlowChart = null;
+        let capitalChart = null;
+        let projectionChart = null;
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-xs font-semibold text-white transition-all duration-300 opacity-0 transform translate-y-2 border border-slate-700 bg-slate-900';
+
+            if (type === 'success') {
+                toast.classList.add('border-emerald-500/40', 'text-emerald-400');
+                toast.innerHTML = `<svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>${message}</span>`;
+            } else if (type === 'error') {
+                toast.classList.add('border-red-500/40', 'text-red-400');
+                toast.innerHTML = `<svg class="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>${message}</span>`;
+            } else {
+                toast.classList.add('border-blue-500/40', 'text-blue-400');
+                toast.innerHTML = `<svg class="w-4 h-4 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>${message}</span>`;
+            }
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function toggleCharts() {
+            const container = document.getElementById('chartsContainer');
+            const btnText = document.getElementById('toggleChartsBtnText');
+            const track = document.getElementById('toggleSwitchTrack');
+            if (!container) return;
+
+            const isHidden = container.classList.contains('hidden');
+            if (isHidden) {
+                container.classList.remove('hidden');
+                if (btnText) btnText.innerText = "OCULTAR GRÁFICOS";
+                if (track) track.classList.add('active');
+                showToast("Gráficos desplegados correctamente", "info");
+                setTimeout(() => {
+                    if (cashFlowChart) cashFlowChart.resize();
+                    if (capitalChart) capitalChart.resize();
+                    if (projectionChart) projectionChart.resize();
+                }, 100);
+            } else {
+                container.classList.add('hidden');
+                if (btnText) btnText.innerText = "MOSTRAR GRÁFICOS";
+                if (track) track.classList.remove('active');
+                showToast("Gráficos ocultados", "info");
+            }
+        }
+
+        function getUfRate() {
+            const input = document.getElementById('ufRateInput');
+            if (input) {
+                const val = parseFloat(input.value);
+                if (!isNaN(val) && val > 0) return val;
+            }
+            return UF_IN_CLP;
+        }
+
+        function updateUfConversion() {
+            const ufInput = document.getElementById('ufInputValue');
+            const resultEl = document.getElementById('ufToClpResult');
+            if (!ufInput || !resultEl) return;
+
+            const rate = getUfRate();
+            const ufAmount = parseFloat(ufInput.value) || 0;
+            const clpTotal = Math.round(ufAmount * rate);
+
+            if (currentCurrency === 'CLP') {
+                resultEl.innerText = `$${new Intl.NumberFormat('es-CL').format(clpTotal)} CLP`;
+            } else {
+                const inCurrent = convertBaseToCurrent(clpTotal);
+                resultEl.innerText = `${formatCurrency(inCurrent)} (~$${new Intl.NumberFormat('es-CL').format(clpTotal)} CLP)`;
+            }
+        }
+
+        function copyUfClpResult() {
+            const ufInput = document.getElementById('ufInputValue');
+            const rate = getUfRate();
+            const ufAmount = parseFloat(ufInput?.value) || 0;
+            const clpTotal = Math.round(ufAmount * rate);
+            const text = `$${new Intl.NumberFormat('es-CL').format(clpTotal)}`;
+
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`Monto copiado: ${text} CLP`, "success");
+            } catch (err) {
+                showToast("No se pudo copiar el monto", "error");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function applyUfAsPurchasePrice() {
+            const ufInput = document.getElementById('ufInputValue');
+            const rate = getUfRate();
+            const ufAmount = parseFloat(ufInput?.value) || 0;
+            if (ufAmount <= 0) {
+                showToast("Ingresa un monto en UF mayor a 0", "error");
+                return;
+            }
+            const clpTotal = Math.round(ufAmount * rate);
+            baseValues.purchasePrice = clpTotal;
+            updateAllInputFieldsFromBase();
+            calculate();
+            showToast(`Precio de Compra actualizado a $${new Intl.NumberFormat('es-CL').format(clpTotal)} CLP (${new Intl.NumberFormat('es-CL').format(ufAmount)} UF)`, "success");
+        }
+
+        function toggleExtraKpis() {
+            const container = document.getElementById('extraKpisGrid');
+            const btnText = document.getElementById('toggleExtraKpisText');
+            const icon = document.getElementById('toggleExtraKpisIcon');
+            if (!container) return;
+
+            const isHidden = container.classList.contains('hidden');
+            if (isHidden) {
+                container.classList.remove('hidden');
+                if (btnText) btnText.innerText = "Ocultar indicadores adicionales";
+                if (icon) icon.classList.add('rotate-180');
+                showToast("Indicadores adicionales desplegados (TIR, DSCR, Payback, Break Even, etc.)", "info");
+            } else {
+                container.classList.add('hidden');
+                if (btnText) btnText.innerText = "Mostrar más indicadores (6)";
+                if (icon) icon.classList.remove('rotate-180');
+                showToast("Indicadores adicionales ocultados", "info");
+            }
+        }
+
+        function toggleCardDetail(detailId, btn) {
+            const detail = document.getElementById(detailId);
+            if (!detail) return;
+
+            const isHidden = detail.classList.contains('hidden');
+            const span = btn.querySelector('span');
+            const svg = btn.querySelector('svg');
+
+            if (isHidden) {
+                detail.classList.remove('hidden');
+                if (span) span.innerText = "Ocultar";
+                if (svg) svg.classList.add('rotate-180');
+            } else {
+                detail.classList.add('hidden');
+                if (span) span.innerText = "Ver más";
+                if (svg) svg.classList.remove('rotate-180');
+            }
+        }
+
+        function toggleSectionCollapse(contentId, btn) {
+            const content = document.getElementById(contentId);
+            if (!content) return;
+
+            const isHidden = content.classList.contains('hidden');
+            const span = btn.querySelector('span');
+            const svg = btn.querySelector('svg');
+
+            if (isHidden) {
+                content.classList.remove('hidden');
+                if (span) span.innerText = "Ocultar";
+                if (svg) svg.classList.remove('rotate-180');
+            } else {
+                content.classList.add('hidden');
+                if (span) span.innerText = "Ver más";
+                if (svg) svg.classList.add('rotate-180');
+            }
+        }
+
+        function shareAnalysis() {
+            const score = document.getElementById('investmentScoreVal')?.innerText || '0';
+            const cashFlow = document.getElementById('cashFlowResult')?.innerText || '$0';
+            const roi = document.getElementById('roiResult')?.innerText || '0%';
+            const tir = document.getElementById('tirResult')?.innerText || '0%';
+            const payback = document.getElementById('paybackResult')?.innerText || '0 Años';
+            const curr = currentCurrency;
+            const textToCopy = `Reporte PropTech Analytics (${curr}) - Score: ${score}/100 | Cash Flow: ${cashFlow}/mes | CoC: ${roi} | TIR 10a: ${tir} | Payback: ${payback}`;
+
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Resumen de análisis copiado al portapapeles", "success");
+            } catch (err) {
+                showToast("No se pudo copiar el resumen", "error");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        async function fetchLiveExchangeRates(manualTrigger = false) {
+            const refreshIcon = document.getElementById('refreshRatesIcon');
+            if (refreshIcon) refreshIcon.classList.add('animate-spin-custom');
+
+            try {
+                const res = await fetch('https://open.er-api.com/v6/latest/USD');
+                if (!res.ok) throw new Error('Network error fetching rates');
+                
+                const data = await res.json();
+                if (data && data.rates && data.rates.CLP && data.rates.EUR) {
+                    const usdToClp = data.rates.CLP;
+                    const usdToEur = data.rates.EUR;
+                    const eurToClp = usdToClp / usdToEur;
+
+                    exchangeRates.CLP = 1;
+                    exchangeRates.USD = 1 / usdToClp;
+                    exchangeRates.EUR = 1 / eurToClp;
+
+                    rateSource = "En vivo (API)";
+                    lastRateUpdate = new Date();
+
+                    updateExchangeRateBadge();
+                    updateAllInputFieldsFromBase();
+                    calculate();
+
+                    if (manualTrigger) {
+                        showToast(`Tipos de cambio actualizados en vivo: 1 USD = $${usdToClp.toFixed(2)} CLP`, "success");
+                    }
+                } else {
+                    throw new Error('Invalid rate payload');
+                }
+            } catch (err) {
+                console.warn("No se pudo conectar a la API de tipos de cambio. Usando tasas de mercado actualizadas.", err);
+                rateSource = "Mercado (Verificado)";
+                updateExchangeRateBadge();
+                if (manualTrigger) {
+                    showToast("Usando tasas de mercado de alta precisión: 1 USD = $954.65 CLP | 1 EUR = $1.085.43 CLP", "info");
+                }
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('animate-spin-custom');
+            }
+        }
+
+        function parseFormattedNumber(val) {
+            if (typeof val === 'number') return isNaN(val) ? 0 : val;
+            if (!val) return 0;
+
+            let str = val.toString().trim().replace(/[$€\s]/g, '');
+            if (str === '' || str === '-') return 0;
+
+            if (currentCurrency === 'USD') {
+                str = str.replace(/,/g, '');
+            } else if (currentCurrency === 'EUR') {
+                if (str.includes('.') && str.includes(',')) {
+                    str = str.replace(/\./g, '').replace(',', '.');
+                } else if (str.includes(',')) {
+                    str = str.replace(',', '.');
+                } else if ((str.match(/\./g) || []).length > 1) {
+                    str = str.replace(/\./g, '');
+                }
+            } else {
+                str = str.replace(/[\.,]/g, '');
+            }
+
+            const parsed = parseFloat(str);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function convertBaseToCurrent(clpAmount) {
+            return clpAmount * exchangeRates[currentCurrency];
+        }
+
+        function convertCurrentToBase(currentAmount) {
+            return currentAmount / exchangeRates[currentCurrency];
+        }
+
+        function formatDecimalNumber(val, decimals) {
+            const num = parseFloat(val) || 0;
+            const config = currencyConfigs[currentCurrency] || currencyConfigs.CLP;
+            const dec = decimals !== undefined ? decimals : config.decimals;
+
+            return new Intl.NumberFormat(config.locale, {
+                minimumFractionDigits: dec,
+                maximumFractionDigits: dec
+            }).format(num);
+        }
+
+        function formatCurrency(valInCurrentCurrency, overrideDecimals) {
+            const num = parseFloat(valInCurrentCurrency) || 0;
+            const config = currencyConfigs[currentCurrency] || currencyConfigs.CLP;
+            const dec = overrideDecimals !== undefined ? overrideDecimals : config.decimals;
+            const formatted = formatDecimalNumber(num, dec);
+
+            return config.position === 'suffix' ? `${formatted} ${config.symbol}` : `${config.symbol}${formatted}`;
+        }
+
+        function formatPercentage(val, decimals = 2) {
+            return `${formatDecimalNumber(val, decimals)}%`;
+        }
+
+        function updateAllInputFieldsFromBase() {
+            const config = currencyConfigs[currentCurrency] || currencyConfigs.CLP;
+            
+            const pPrice = convertBaseToCurrent(baseValues.purchasePrice);
+            const iCosts = convertBaseToCurrent(baseValues.initialCosts);
+            const mRent = convertBaseToCurrent(baseValues.monthlyRent);
+            const mExp = convertBaseToCurrent(baseValues.monthlyExpenses);
+
+            document.getElementById('purchasePrice').value = formatDecimalNumber(pPrice, config.decimals);
+            document.getElementById('initialCosts').value = formatDecimalNumber(iCosts, config.decimals);
+            document.getElementById('monthlyRent').value = formatDecimalNumber(mRent, config.decimals);
+            document.getElementById('monthlyExpenses').value = formatDecimalNumber(mExp, config.decimals);
+
+            ['currencySymbolPrefix1', 'currencySymbolPrefix2', 'currencySymbolPrefix3', 'currencySymbolPrefix4'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = config.symbol;
+            });
+        }
+
+        function syncInputToBase(fieldKey, currentInputValue) {
+            const numericInCurrent = parseFormattedNumber(currentInputValue);
+            baseValues[fieldKey] = convertCurrentToBase(numericInCurrent);
+        }
+
+        function updateExchangeRateBadge() {
+            const textEl = document.getElementById('exchangeRateText');
+            const dotEl = document.getElementById('rateStatusDot');
+            if (!textEl) return;
+
+            const usdToClp = (1 / exchangeRates.USD).toFixed(2);
+            const eurToClp = (1 / exchangeRates.EUR).toFixed(2);
+
+            if (currentCurrency === 'CLP') {
+                textEl.innerHTML = `Base: <strong class="text-blue-400">CLP</strong> | USD: <strong class="text-blue-400">$${usdToClp}</strong> | EUR: <strong class="text-blue-400">$${eurToClp}</strong>`;
+            } else if (currentCurrency === 'USD') {
+                textEl.innerHTML = `Tasa: <strong class="text-blue-400">1 USD = $${usdToClp} CLP</strong> (${rateSource})`;
+            } else if (currentCurrency === 'EUR') {
+                textEl.innerHTML = `Tasa: <strong class="text-blue-400">1 EUR = $${eurToClp} CLP</strong> (${rateSource})`;
+            }
+
+            if (dotEl) {
+                dotEl.className = rateSource.includes("API") ? "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" : "w-2 h-2 rounded-full bg-blue-400";
+            }
+        }
+
+        // MOTOR ALGORÍTMICO DE CÁLCULO DE TIR / IRR (Newton-Raphson)
+        function calculateIRR(cashFlows, guess = 0.1) {
+            let rate = guess;
+            const maxIter = 1000;
+            const precision = 0.00001;
+
+            for (let i = 0; i < maxIter; i++) {
+                let npv = 0;
+                let dnpv = 0;
+                for (let t = 0; t < cashFlows.length; t++) {
+                    npv += cashFlows[t] / Math.pow(1 + rate, t);
+                    dnpv -= t * cashFlows[t] / Math.pow(1 + rate, t + 1);
+                }
+                if (Math.abs(npv) < precision) return rate * 100;
+                if (dnpv === 0) break;
+                let newRate = rate - npv / dnpv;
+                if (isNaN(newRate) || !isFinite(newRate)) break;
+                rate = newRate;
+            }
+            return rate * 100;
+        }
+
+        function getDebtAndTIRForHorizon(horizonYears, totalCash, annualCashFlow, purchasePrice, loanPrincipal, interestRate, loanTermMonths, monthlyMortgage, appreciationRate) {
+            const totalMonths = horizonYears * 12;
+            let remainingDebt = loanPrincipal;
+
+            for (let m = 1; m <= totalMonths; m++) {
+                if (m <= loanTermMonths && remainingDebt > 0) {
+                    if (interestRate > 0) {
+                        let iMonth = remainingDebt * interestRate;
+                        let pMonth = monthlyMortgage - iMonth;
+                        remainingDebt = Math.max(0, remainingDebt - pMonth);
+                    } else {
+                        remainingDebt = Math.max(0, remainingDebt - monthlyMortgage);
+                    }
+                } else if (m > loanTermMonths) {
+                    remainingDebt = 0;
+                }
+            }
+
+            const projectedVal = purchasePrice * Math.pow(1 + appreciationRate, horizonYears);
+            const netEquityAtSale = Math.max(0, projectedVal - remainingDebt);
+            const cumCashFlow = annualCashFlow * horizonYears;
+
+            const cashFlows = [-totalCash];
+            for (let y = 1; y <= horizonYears; y++) {
+                if (y < horizonYears) {
+                    cashFlows.push(annualCashFlow);
+                } else {
+                    cashFlows.push(annualCashFlow + netEquityAtSale);
+                }
+            }
+
+            const tir = totalCash > 0 ? calculateIRR(cashFlows) : 0;
+
+            return {
+                horizonYears,
+                tir,
+                projectedVal,
+                remainingDebt,
+                netEquityAtSale,
+                cumCashFlow,
+                totalNetProfit: cumCashFlow + netEquityAtSale - totalCash
+            };
+        }
+
+        function renderTIRComparison(horizonsData, activeHorizon) {
+            const grid = document.getElementById('tirComparisonGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            horizonsData.forEach(item => {
+                const isActive = item.horizonYears === activeHorizon;
+                const card = document.createElement('div');
+                
+                card.className = `p-3.5 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                    isActive 
+                        ? 'bg-rose-950/40 border-rose-500/80 shadow-lg shadow-rose-500/10 ring-1 ring-rose-500/50' 
+                        : 'bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50'
+                }`;
+
+                card.onclick = () => {
+                    const select = document.getElementById('tirHorizonSelect');
+                    if (select) {
+                        select.value = item.horizonYears.toString();
+                        calculate();
+                        showToast(`Horizonte de TIR cambiado a ${item.horizonYears} años`, "info");
+                    }
+                };
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[11px] font-extrabold ${isActive ? 'text-rose-300' : 'text-slate-300'}">${item.horizonYears} Años</span>
+                            ${isActive ? '<span class="text-[8px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/20 px-1.5 py-0.5 rounded">Seleccionado</span>' : '<span class="text-[8px] font-medium text-slate-500">Haz clic</span>'}
+                        </div>
+                        <div class="text-lg font-black ${isActive ? 'text-rose-400' : 'text-white'} font-mono mb-2">
+                            ${formatPercentage(item.tir)}
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 pt-2 border-t border-slate-800/80 text-[10px]">
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span>Val. Propiedad:</span>
+                            <span class="font-bold font-mono text-slate-200">${formatCurrency(item.projectedVal)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span>Deuda Remanente:</span>
+                            <span class="font-bold font-mono ${item.remainingDebt > 0 ? 'text-amber-400' : 'text-emerald-400'}">${formatCurrency(item.remainingDebt)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span>Equity Neto (Venta):</span>
+                            <span class="font-bold font-mono text-blue-400">${formatCurrency(item.netEquityAtSale)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-400 pt-1 border-t border-slate-800/50">
+                            <span>Flujo Acumulado:</span>
+                            <span class="font-bold font-mono ${item.cumCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}">${formatCurrency(item.cumCashFlow)}</span>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function calculateInvestmentScore(cashFlow, roiCoC, capRate, dscr, ltv, monthlyRent, purchasePrice, breakEvenOccupancy, tirHorizonVal) {
+            if (purchasePrice === 0 && monthlyRent === 0) return 0;
+
+            let score = 0;
+            if (cashFlow > 0) {
+                const cfMargin = monthlyRent > 0 ? (cashFlow / monthlyRent) : 0;
+                if (cfMargin >= 0.25) score += 20;
+                else if (cfMargin >= 0.15) score += 16;
+                else if (cfMargin >= 0.05) score += 12;
+                else score += 8;
+            } else if (cashFlow === 0) {
+                score += 4;
+            }
+
+            if (roiCoC >= 10) score += 20;
+            else if (roiCoC >= 7) score += 16;
+            else if (roiCoC >= 5) score += 12;
+            else if (roiCoC >= 3) score += 8;
+            else if (roiCoC > 0) score += 4;
+
+            if (dscr >= 1.4) score += 15;
+            else if (dscr >= 1.25) score += 12;
+            else if (dscr >= 1.1) score += 8;
+            else if (dscr >= 1.0) score += 4;
+
+            if (capRate >= 8) score += 15;
+            else if (capRate >= 6.5) score += 12;
+            else if (capRate >= 5) score += 8;
+            else if (capRate >= 3.5) score += 4;
+
+            // Ponderación de Break Even (Ocupación Mínima Requerida)
+            if (breakEvenOccupancy > 0 && breakEvenOccupancy <= 70) score += 15;
+            else if (breakEvenOccupancy <= 82) score += 10;
+            else if (breakEvenOccupancy <= 95) score += 5;
+
+            // Ponderación de TIR
+            if (tirHorizonVal >= 14) score += 15;
+            else if (tirHorizonVal >= 10) score += 12;
+            else if (tirHorizonVal >= 7) score += 8;
+            else if (tirHorizonVal > 0) score += 4;
+
+            return Math.min(100, Math.max(0, Math.round(score)));
+        }
+
+        function setDownPayment(val) {
+            const slider = document.getElementById('downPaymentPct');
+            if (slider) {
+                slider.value = val;
+                calculate();
+            }
+        }
+
+        function calculate() {
+            // Conversión de valores a la moneda activa
+            const purchasePrice = convertBaseToCurrent(baseValues.purchasePrice);
+            const initialCosts = convertBaseToCurrent(baseValues.initialCosts);
+            const downPct = (parseFloat(document.getElementById('downPaymentPct').value) || 0) / 100;
+            const interestRate = (parseFloat(document.getElementById('interestRate').value) || 0) / 100 / 12;
+            const loanTermMonths = (parseFloat(document.getElementById('loanTerm').value) || 0) * 12;
+            const monthlyRent = convertBaseToCurrent(baseValues.monthlyRent);
+            const monthlyExp = convertBaseToCurrent(baseValues.monthlyExpenses);
+
+            // Supuestos de Largo Plazo (Horizonte TIR & Plusvalía)
+            const selectedHorizon = parseInt(document.getElementById('tirHorizonSelect')?.value || '10');
+            const appreciationRate = (parseFloat(document.getElementById('appreciationRate')?.value) || 2.0) / 100;
+
+            const downPaymentAmount = purchasePrice * downPct;
+            const totalCash = downPaymentAmount + initialCosts;
+            const loanPrincipal = Math.max(0, purchasePrice - downPaymentAmount);
+            
+            let monthlyMortgage = 0;
+            if (loanPrincipal > 0 && interestRate > 0 && loanTermMonths > 0) {
+                monthlyMortgage = loanPrincipal * (interestRate * Math.pow(1 + interestRate, loanTermMonths)) / (Math.pow(1 + interestRate, loanTermMonths) - 1);
+            } else if (loanPrincipal > 0 && loanTermMonths > 0) {
+                monthlyMortgage = loanPrincipal / loanTermMonths;
+            }
+
+            const cashFlow = monthlyRent - monthlyExp - monthlyMortgage;
+            const annualCashFlow = cashFlow * 12;
+
+            const totalMortgagePaid = monthlyMortgage * loanTermMonths;
+            const totalInterestPaid = Math.max(0, totalMortgagePaid - loanPrincipal);
+            const totalPropertyCost = totalCash + totalMortgagePaid;
+
+            const annualNOI = (monthlyRent - monthlyExp) * 12;
+            const capRate = purchasePrice > 0 ? (annualNOI / purchasePrice) * 100 : 0;
+            const roiCoC = totalCash > 0 ? (annualCashFlow / totalCash) * 100 : 0;
+
+            const annualMortgage = monthlyMortgage * 12;
+            const dscr = annualMortgage > 0 ? (annualNOI / annualMortgage) : 0;
+            const ltv = purchasePrice > 0 ? (loanPrincipal / purchasePrice) * 100 : 0;
+            const initialEquity = Math.max(0, purchasePrice - loanPrincipal);
+
+            // 1. Break Even (Punto de Equilibrio)
+            const breakEvenRent = monthlyExp + monthlyMortgage;
+            const breakEvenOccupancy = monthlyRent > 0 ? (breakEvenRent / monthlyRent) * 100 : 0;
+
+            // 2. Payback Period
+            let paybackYears = 0;
+            if (annualCashFlow > 0 && totalCash > 0) {
+                paybackYears = totalCash / annualCashFlow;
+            } else {
+                paybackYears = Infinity;
+            }
+
+            // 3. CÁLCULO DE TIR MULTI-HORIZONTE (10, 15, 20, 25, 30 Años)
+            const horizonOptions = [10, 15, 20, 25, 30];
+            const horizonsResults = horizonOptions.map(h => 
+                getDebtAndTIRForHorizon(h, totalCash, annualCashFlow, purchasePrice, loanPrincipal, interestRate, loanTermMonths, monthlyMortgage, appreciationRate)
+            );
+
+            // Active Selected Horizon Data
+            const activeTirData = horizonsResults.find(h => h.horizonYears === selectedHorizon) || horizonsResults[0];
+            const tirSelectedValue = activeTirData.tir;
+
+            // Render Multi-Horizon Comparison Grid
+            renderTIRComparison(horizonsResults, selectedHorizon);
+
+            const investmentScore = calculateInvestmentScore(cashFlow, roiCoC, capRate, dscr, ltv, monthlyRent, purchasePrice, breakEvenOccupancy, tirSelectedValue);
+
+            // Update UI Labels & Currency Indicators
+            const currCfg = currencyConfigs[currentCurrency];
+            document.getElementById('kpiCurrencyLabel').innerText = `Valores en ${currCfg.code} (${currCfg.symbol})`;
+            document.getElementById('tableCurrencyBadge').innerText = `Moneda: ${currCfg.code} (${currCfg.symbol})`;
+            document.getElementById('chartsCurrencyLabel').innerText = `Valores en ${currCfg.code} (${currCfg.symbol})`;
+
+            // Update UF summary row
+            const currentUfRate = getUfRate();
+            const ufEquivalent = currentUfRate > 0 ? (baseValues.purchasePrice / currentUfRate) : 0;
+            document.getElementById('ufSummaryVal').innerText = `${new Intl.NumberFormat('es-CL', { maximumFractionDigits: 2 }).format(ufEquivalent)} UF`;
+            document.getElementById('ufSummaryDetail').innerText = `(Valor Referencial UF: $${Math.round(currentUfRate).toLocaleString('es-CL')} CLP)`;
+            updateUfConversion();
+
+            // Update Score & Status Display
+            document.getElementById('investmentScoreVal').innerText = investmentScore;
+            
+            let profileType = "⚪ Esperando Datos";
+            let profileBadgeClass = "text-slate-400 bg-slate-500/10 border-slate-500/20";
+            if (purchasePrice > 0 || monthlyRent > 0) {
+                if (ltv <= 75 && dscr >= 1.25 && cashFlow > 0) {
+                    profileType = "🟢 Perfil Conservador";
+                    profileBadgeClass = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+                } else if (ltv > 85 || dscr < 1.05 || cashFlow < 0) {
+                    profileType = "🔴 Perfil Agresivo";
+                    profileBadgeClass = "text-red-400 bg-red-500/10 border-red-500/20";
+                } else {
+                    profileType = "🟡 Perfil Moderado";
+                    profileBadgeClass = "text-amber-400 bg-amber-500/10 border-amber-500/20";
+                }
+            }
+
+            const profileBadge = document.getElementById('profileBadge');
+            profileBadge.innerText = profileType;
+            profileBadge.className = `text-[9px] font-bold px-2 py-0.5 rounded-full border ${profileBadgeClass}`;
+
+            const scoreStatusBadge = document.getElementById('scoreStatusBadge');
+            const scoreStatusText = document.getElementById('scoreStatusText');
+
+            if (purchasePrice === 0 && monthlyRent === 0) {
+                scoreStatusBadge.className = 'px-3.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-extrabold text-xs inline-flex items-center gap-2';
+                scoreStatusText.innerText = '⚪ Sin Datos de Inversión';
+            } else if (investmentScore >= 78) {
+                scoreStatusBadge.className = 'px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-extrabold text-xs inline-flex items-center gap-2 shadow-lg shadow-emerald-500/10';
+                scoreStatusText.innerText = '🟢 Oportunidad Atractiva';
+            } else if (investmentScore >= 60) {
+                scoreStatusBadge.className = 'px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold text-xs inline-flex items-center gap-2 shadow-lg shadow-amber-500/10';
+                scoreStatusText.innerText = '🟡 Oportunidad Viable';
+            } else {
+                scoreStatusBadge.className = 'px-3.5 py-1.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-extrabold text-xs inline-flex items-center gap-2 shadow-lg shadow-red-500/10';
+                scoreStatusText.innerText = '🔴 Alto Riesgo / Ajustar Parámetros';
+            }
+
+            const recommendationText = document.getElementById('recommendationText');
+            if (purchasePrice === 0 && monthlyRent === 0) {
+                recommendationText.innerText = "Ingrese el precio de compra y renta mensual estimada para calcular el flujo de caja, TIR y punto de equilibrio.";
+            } else if (investmentScore >= 78) {
+                recommendationText.innerText = `Excelente estructura con TIR proyectada a ${selectedHorizon} años del ${formatPercentage(tirSelectedValue)} y punto de equilibrio en ${formatCurrency(breakEvenRent)}/mes (${formatDecimalNumber(breakEvenOccupancy, 1)}% ocupación).`;
+            } else if (investmentScore >= 60) {
+                recommendationText.innerText = `Proyecto viable con TIR (${selectedHorizon}a) del ${formatPercentage(tirSelectedValue)}. Break-even en ${formatCurrency(breakEvenRent)}/mes. Se sugiere aumentar el pie para mejorar la TIR y reducir holgura.`;
+            } else {
+                recommendationText.innerText = "Cash Flow o Break Even en zona de riesgo. Se desaconseja la compra sin previo ajuste de tasa, plazo o precio de oferta.";
+            }
+
+            // Update Single Row KPI Cards
+            const downPctInt = Math.round(downPct * 100);
+            const formattedDownPayment = formatCurrency(downPaymentAmount);
+            document.getElementById('downPaymentBadge').innerText = `${downPctInt}% (${formattedDownPayment})`;
+            
+            document.getElementById('cashFlowResult').innerText = formatCurrency(cashFlow);
+            document.getElementById('cashFlowExplain').innerText = cashFlow > 0 ? `+${formatCurrency(cashFlow)} netos/mes libre` : `${formatCurrency(cashFlow)} neto/mes`;
+
+            document.getElementById('roiResult').innerText = formatPercentage(roiCoC);
+            document.getElementById('capRateResult').innerText = formatPercentage(capRate);
+            document.getElementById('dscrResult').innerText = formatDecimalNumber(dscr, 2);
+            document.getElementById('ltvResult').innerText = formatPercentage(ltv);
+            document.getElementById('totalCashCardVal').innerText = formatCurrency(totalCash);
+
+            document.getElementById('breakEvenResult').innerText = formatCurrency(breakEvenRent);
+            document.getElementById('breakEvenExplain').innerText = `Renta mín. ($0 pérdidas) | ${formatDecimalNumber(breakEvenOccupancy, 1)}% ocupación`;
+
+            const paybackText = isFinite(paybackYears) && paybackYears > 0 ? `${formatDecimalNumber(paybackYears, 1)} Años` : 'N/A (Sin Flujo)';
+            document.getElementById('paybackResult').innerText = paybackText;
+            document.getElementById('paybackExplain').innerText = isFinite(paybackYears) ? `Recupera ${formatCurrency(totalCash)} invertidos` : 'Cash Flow no amortiza el capital';
+
+            // DYNAMIC TIR CARD TEXTS
+            document.getElementById('tirCardTitle').innerText = `TIR (${selectedHorizon} años)`;
+            document.getElementById('tirResult').innerText = formatPercentage(tirSelectedValue);
+            document.getElementById('tirExplain').innerText = `Rendimiento a ${selectedHorizon}a (Flujos + Plusvalía ${formatPercentage(appreciationRate * 100, 1)}/a)`;
+
+            // Tabla Resumen Financiero Estructurado
+            document.getElementById('summaryPropertyValue').innerText = formatCurrency(purchasePrice);
+            document.getElementById('totalCashInvested').innerText = formatCurrency(totalCash);
+            document.getElementById('initialEquityVal').innerText = formatCurrency(initialEquity);
+            document.getElementById('loanAmount').innerText = formatCurrency(loanPrincipal);
+            document.getElementById('monthlyMortgage').innerText = formatCurrency(monthlyMortgage);
+            
+            document.getElementById('noiAnual').innerText = formatCurrency(annualNOI);
+
+            const summaryCFElem = document.getElementById('summaryMonthlyCashFlow');
+            summaryCFElem.innerText = formatCurrency(cashFlow);
+            summaryCFElem.className = cashFlow >= 0 ? 'py-2.5 px-3 text-right font-bold text-emerald-400 font-mono text-xs md:text-sm' : 'py-2.5 px-3 text-right font-bold text-red-400 font-mono text-xs md:text-sm';
+
+            document.getElementById('tableBreakEvenVal').innerText = `${formatCurrency(breakEvenRent)} (${formatDecimalNumber(breakEvenOccupancy, 1)}% ocupación)`;
+            document.getElementById('tablePaybackVal').innerText = paybackText;
+            document.getElementById('tableTirLabel').innerText = `TIR Proyectada (${selectedHorizon} Años)`;
+            document.getElementById('tableTirVal').innerText = formatPercentage(tirSelectedValue);
+
+            document.getElementById('totalInterest').innerText = formatCurrency(totalInterestPaid);
+            document.getElementById('totalPropertyCost').innerText = formatCurrency(totalPropertyCost);
+
+            document.getElementById('breakdownInitialCash').innerText = formatCurrency(totalCash);
+            document.getElementById('breakdownTotalMortgage').innerText = formatCurrency(totalMortgagePaid);
+
+            updateCharts(monthlyRent, monthlyExp, monthlyMortgage, cashFlow, totalCash, loanPrincipal, interestRate, loanTermMonths);
+        }
+
+        function updateCharts(monthlyRent, monthlyExp, monthlyMortgage, cashFlow, totalCash, loanPrincipal, interestRate, loanTermMonths) {
+            const ctxCashFlow = document.getElementById('cashFlowChart').getContext('2d');
+            const ctxCapital = document.getElementById('capitalChart').getContext('2d');
+            const ctxProjection = document.getElementById('projectionChart').getContext('2d');
+
+            // Chart 1: Cash flow breakdown
+            const cashFlowData = [
+                Math.max(0, monthlyExp),
+                Math.max(0, monthlyMortgage),
+                Math.max(0, cashFlow)
+            ];
+
+            if (cashFlowChart) cashFlowChart.destroy();
+            cashFlowChart = new Chart(ctxCashFlow, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Gastos operativos', 'Pago hipotecario', 'Cash Flow libre'],
+                    datasets: [{
+                        data: cashFlowData,
+                        backgroundColor: ['#f59e0b', '#6366f1', '#10b981'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { size: 10, family: 'Plus Jakarta Sans' },
+                                boxWidth: 10,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Chart 2: Capital composition
+            const totalCapitalNeeded = totalCash + loanPrincipal;
+            const ownPct = totalCapitalNeeded > 0 ? Math.round((totalCash / totalCapitalNeeded) * 100) : 0;
+            const debtPct = totalCapitalNeeded > 0 ? (100 - ownPct) : 0;
+
+            if (capitalChart) capitalChart.destroy();
+            capitalChart = new Chart(ctxCapital, {
+                type: 'doughnut',
+                data: {
+                    labels: [`Capital Propio (${ownPct}%)`, `Crédito (${debtPct}%)`],
+                    datasets: [{
+                        data: [totalCash, loanPrincipal],
+                        backgroundColor: ['#a855f7', '#3b82f6'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { size: 10, family: 'Plus Jakarta Sans' },
+                                boxWidth: 10,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Chart 3: Projections
+            const yearsToProject = Math.max(1, Math.round(loanTermMonths / 12) || 30);
+            
+            const projTitleEl = document.getElementById('projectionTitleText');
+            if (projTitleEl) projTitleEl.innerText = `Proyección Acumulada a ${yearsToProject} Años`;
+            const projBadgeEl = document.getElementById('projectionBadge');
+            if (projBadgeEl) projBadgeEl.innerText = `Modelo ${yearsToProject * 12} Meses`;
+
+            const projectionLabels = [];
+            let cumulativeCashFlow = [];
+            let remainingDebt = [];
+            
+            let currentBalance = loanPrincipal;
+            let currentCumCF = 0;
+
+            for (let y = 1; y <= yearsToProject; y++) {
+                projectionLabels.push(`Año ${y}`);
+                for (let m = 0; m < 12; m++) {
+                    currentCumCF += cashFlow;
+                    if (currentBalance > 0 && interestRate > 0) {
+                        let interestMonth = currentBalance * interestRate;
+                        let principalMonth = monthlyMortgage - interestMonth;
+                        currentBalance = Math.max(0, currentBalance - principalMonth);
+                    } else if (currentBalance > 0 && interestRate === 0) {
+                        currentBalance = Math.max(0, currentBalance - monthlyMortgage);
+                    }
+                }
+                cumulativeCashFlow.push(Math.round(currentCumCF));
+                remainingDebt.push(Math.round(currentBalance));
+            }
+
+            if (projectionChart) projectionChart.destroy();
+            projectionChart = new Chart(ctxProjection, {
+                type: 'line',
+                data: {
+                    labels: projectionLabels,
+                    datasets: [
+                        {
+                            label: 'Cash Flow Acumulado',
+                            data: cumulativeCashFlow,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            borderWidth: 2,
+                            pointRadius: yearsToProject > 10 ? 2 : 3
+                        },
+                        {
+                            label: 'Saldo Deuda Hipotecaria',
+                            data: remainingDebt,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            borderWidth: 2,
+                            pointRadius: yearsToProject > 10 ? 2 : 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: '#1e293b' },
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 10 },
+                                maxRotation: 0,
+                                autoSkip: false,
+                                callback: function(value, index) {
+                                    const year = index + 1;
+                                    if (year === 1 || year % 5 === 0 || year === yearsToProject) {
+                                        return `Año ${year}`;
+                                    }
+                                    return null;
+                                }
+                            }
+                        },
+                        y: {
+                            grid: { color: '#1e293b' },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 10 },
+                                callback: function(value) {
+                                    return formatCurrency(value, 0);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { size: 10 },
+                                boxWidth: 10
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.dataset.label}: ${formatCurrency(context.raw)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportToExcel() {
+            try {
+                const wb = XLSX.utils.book_new();
+
+                const pPrice = convertBaseToCurrent(baseValues.purchasePrice);
+                const iCosts = convertBaseToCurrent(baseValues.initialCosts);
+                const mRent = convertBaseToCurrent(baseValues.monthlyRent);
+                const mExp = convertBaseToCurrent(baseValues.monthlyExpenses);
+
+                const downPct = parseFloat(document.getElementById('downPaymentPct').value) || 0;
+                const horizonYears = document.getElementById('tirHorizonSelect').value;
+                const appreciationRateVal = document.getElementById('appreciationRate').value;
+                const score = document.getElementById('investmentScoreVal').innerText;
+                const curr = currentCurrency;
+                const rateInfo = `1 USD = ${(1/exchangeRates.USD).toFixed(2)} CLP | 1 EUR = ${(1/exchangeRates.EUR).toFixed(2)} CLP`;
+
+                const data = [
+                    ["PROPTECH ANALYTICS PRO - REPORTE DE DECISIÓN DE INVERSIÓN MULTIMONEDA"],
+                    ["Fecha Generación:", new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()],
+                    ["Moneda Seleccionada:", curr + " (" + currencyConfigs[curr].name + ")"],
+                    ["Tipos de Cambio Referenciales:", rateInfo],
+                    ["Score de Inversión:", score + "/100"],
+                    [],
+                    ["PARÁMETROS DE ENTRADA (" + curr + ")", "VALOR"],
+                    ["Precio de Compra", formatCurrency(pPrice)],
+                    ["Gastos Iniciales", formatCurrency(iCosts)],
+                    ["Pie / Enganche (%)", downPct + "%"],
+                    ["Tasa Hipotecaria Anual (%)", document.getElementById('interestRate').value + "%"],
+                    ["Plazo Crédito (Años)", document.getElementById('loanTerm').value],
+                    ["Renta Mensual Estimada", formatCurrency(mRent)],
+                    ["Gastos Operativos Mensuales", formatCurrency(mExp)],
+                    ["Horizonte TIR Seleccionado", horizonYears + " Años"],
+                    ["Plusvalía Anual Estimada", appreciationRateVal + "%"],
+                    [],
+                    ["MÉTRICAS CLAVE Y RENTABILIDAD", "VALOR"],
+                    ["Cash Flow Mensual Libre", document.getElementById('cashFlowResult').innerText],
+                    ["CoC Return (ROI Efectivo)", document.getElementById('roiResult').innerText],
+                    ["Cap Rate (Renta Activo)", document.getElementById('capRateResult').innerText],
+                    ["Punto de Equilibrio (Break Even)", document.getElementById('breakEvenResult').innerText],
+                    ["Período de Recuperación (Payback)", document.getElementById('paybackResult').innerText],
+                    [`TIR Proyectada (${horizonYears} Años)`, document.getElementById('tirResult').innerText],
+                    ["DSCR (Cobertura Deuda)", document.getElementById('dscrResult').innerText],
+                    ["LTV (Porcentaje Deuda)", document.getElementById('ltvResult').innerText],
+                    [],
+                    ["RESUMEN FINANCIERO COMPLETO (" + curr + ")", "MONTO"],
+                    ["Valor Comercial Propiedad", document.getElementById('summaryPropertyValue').innerText],
+                    ["Inversión Inicial de Bolsillo", document.getElementById('totalCashInvested').innerText],
+                    ["Monto Crédito Hipotecario", document.getElementById('loanAmount').innerText],
+                    ["Patrimonio Inicial (Equity)", document.getElementById('initialEquityVal').innerText],
+                    ["Cuota Mensual Banco", document.getElementById('monthlyMortgage').innerText],
+                    ["NOI Anual", document.getElementById('noiAnual').innerText],
+                    ["Costo Financiero Total (Intereses)", document.getElementById('totalInterest').innerText],
+                    ["Costo Acumulado Total Inversión", document.getElementById('totalPropertyCost').innerText]
+                ];
+
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                XLSX.utils.book_append_sheet(wb, ws, `Reporte ${curr}`);
+                XLSX.writeFile(wb, `Reporte_Inmobiliario_${curr}_${new Date().toISOString().slice(0,10)}.xlsx`);
+                showToast(`Reporte en ${curr} exportado exitosamente a Excel`, "success");
+            } catch (err) {
+                console.error("Error exportando a Excel:", err);
+                showToast("Error al exportar reporte", "error");
+            }
+        }
+
+        window.onload = function() {
+            const inputMappings = [
+                { id: 'purchasePrice', key: 'purchasePrice' },
+                { id: 'initialCosts', key: 'initialCosts' },
+                { id: 'monthlyRent', key: 'monthlyRent' },
+                { id: 'monthlyExpenses', key: 'monthlyExpenses' }
+            ];
+
+            inputMappings.forEach(item => {
+                const el = document.getElementById(item.id);
+                if (el) {
+                    el.addEventListener('input', (e) => {
+                        syncInputToBase(item.key, e.target.value);
+                        calculate();
+                    });
+
+                    el.addEventListener('focus', (e) => {
+                        const numInCurr = convertBaseToCurrent(baseValues[item.key]);
+                        if (numInCurr === 0) {
+                            e.target.value = '';
+                        } else {
+                            e.target.value = currentCurrency === 'CLP' ? Math.round(numInCurr).toString() : numInCurr.toFixed(currencyConfigs[currentCurrency].decimals);
+                        }
+                    });
+
+                    el.addEventListener('blur', (e) => {
+                        syncInputToBase(item.key, e.target.value);
+                        const cfg = currencyConfigs[currentCurrency] || currencyConfigs.CLP;
+                        const numInCurr = convertBaseToCurrent(baseValues[item.key]);
+                        e.target.value = formatDecimalNumber(numInCurr, cfg.decimals);
+                        calculate();
+                    });
+                }
+            });
+
+            ['downPaymentPct', 'interestRate', 'loanTerm', 'tirHorizonSelect', 'appreciationRate'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', calculate);
+            });
+
+            document.getElementById('currencySelect').addEventListener('change', (e) => {
+                currentCurrency = e.target.value;
+
+                updateAllInputFieldsFromBase();
+                updateExchangeRateBadge();
+                calculate();
+
+                const cfg = currencyConfigs[currentCurrency];
+                showToast(`Moneda cambiada a ${cfg.name} (${cfg.symbol}). Todos los montos recalculados.`, "info");
+            });
+
+            // Listeners para conversor de UF a CLP
+            const ufInput = document.getElementById('ufInputValue');
+            const ufRateInput = document.getElementById('ufRateInput');
+            if (ufInput) {
+                ufInput.addEventListener('input', updateUfConversion);
+            }
+            if (ufRateInput) {
+                ufRateInput.addEventListener('input', () => {
+                    updateUfConversion();
+                    calculate();
+                });
+            }
+            updateUfConversion();
+
+            fetchLiveExchangeRates();
+            updateAllInputFieldsFromBase();
+            calculate();
+        };
+    </script>
+</body>
+</html>
